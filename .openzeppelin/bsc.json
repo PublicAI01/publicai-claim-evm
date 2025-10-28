@@ -1,0 +1,643 @@
+{
+  "manifestVersion": "3.2",
+  "proxies": [
+    {
+      "address": "0x40dCA088c890505A99C6bA1abEFA3De54a711D27",
+      "txHash": "0x194b9010e5bcfe0e422adeb5422cd2bfd935d57125a2ed6152e6392c408a8634",
+      "kind": "uups"
+    },
+    {
+      "address": "0xEf0B523C9bb616Ce0c19644EA270e344E905D97b",
+      "txHash": "0xe232e6a1b0c13b8655655dd118c6a787ad2d5337666e4a2eb86d34e2a6eac6e4",
+      "kind": "uups"
+    }
+  ],
+  "impls": {
+    "cb191c4f75325a626594158e5ccaba38c747f6648cc387f366b542d31447be89": {
+      "address": "0x61062913E777E1Cdf0C08559bC67CcfA97a7356E",
+      "txHash": "0x1c3e2a6d27ee9eb10a6d485493b446602863d5e088db5e199118b5dca7dffeac",
+      "layout": {
+        "solcVersion": "0.8.28",
+        "storage": [
+          {
+            "label": "signer",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_address",
+            "contract": "PublicAIClaimUpgradeable",
+            "src": "contracts/PublicAIClaimUpgradeable.sol:64"
+          },
+          {
+            "label": "totalClaimed",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_uint128",
+            "contract": "PublicAIClaimUpgradeable",
+            "src": "contracts/PublicAIClaimUpgradeable.sol:65"
+          },
+          {
+            "label": "totalClaimedPublic",
+            "offset": 16,
+            "slot": "1",
+            "type": "t_uint128",
+            "contract": "PublicAIClaimUpgradeable",
+            "src": "contracts/PublicAIClaimUpgradeable.sol:66"
+          },
+          {
+            "label": "usdtToken",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_contract(IERC20)1884",
+            "contract": "PublicAIClaimUpgradeable",
+            "src": "contracts/PublicAIClaimUpgradeable.sol:67"
+          },
+          {
+            "label": "publicToken",
+            "offset": 0,
+            "slot": "3",
+            "type": "t_contract(IERC20)1884",
+            "contract": "PublicAIClaimUpgradeable",
+            "src": "contracts/PublicAIClaimUpgradeable.sol:68"
+          },
+          {
+            "label": "pools",
+            "offset": 0,
+            "slot": "4",
+            "type": "t_mapping(t_uint16,t_struct(Pool)2460_storage)",
+            "contract": "PublicAIClaimUpgradeable",
+            "src": "contracts/PublicAIClaimUpgradeable.sol:71"
+          },
+          {
+            "label": "poolExists",
+            "offset": 0,
+            "slot": "5",
+            "type": "t_mapping(t_uint16,t_bool)",
+            "contract": "PublicAIClaimUpgradeable",
+            "src": "contracts/PublicAIClaimUpgradeable.sol:72"
+          },
+          {
+            "label": "voterPool",
+            "offset": 0,
+            "slot": "6",
+            "type": "t_struct(VoterPool)2470_storage",
+            "contract": "PublicAIClaimUpgradeable",
+            "src": "contracts/PublicAIClaimUpgradeable.sol:73"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_struct(InitializableStorage)73_storage": {
+            "label": "struct Initializable.InitializableStorage",
+            "members": [
+              {
+                "label": "_initialized",
+                "type": "t_uint64",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "_initializing",
+                "type": "t_bool",
+                "offset": 8,
+                "slot": "0"
+              }
+            ],
+            "numberOfBytes": "32"
+          },
+          "t_struct(OwnableStorage)13_storage": {
+            "label": "struct OwnableUpgradeable.OwnableStorage",
+            "members": [
+              {
+                "label": "_owner",
+                "type": "t_address",
+                "offset": 0,
+                "slot": "0"
+              }
+            ],
+            "numberOfBytes": "32"
+          },
+          "t_struct(ReentrancyGuardStorage)226_storage": {
+            "label": "struct ReentrancyGuardUpgradeable.ReentrancyGuardStorage",
+            "members": [
+              {
+                "label": "_status",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "0"
+              }
+            ],
+            "numberOfBytes": "32"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint64": {
+            "label": "uint64",
+            "numberOfBytes": "8"
+          },
+          "t_contract(IERC20)1884": {
+            "label": "contract IERC20",
+            "numberOfBytes": "20"
+          },
+          "t_mapping(t_address,t_struct(RewardItem)2436_storage)": {
+            "label": "mapping(address => struct PublicAIClaimUpgradeable.RewardItem)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_struct(VoterRewardItem)2450_storage)": {
+            "label": "mapping(address => struct PublicAIClaimUpgradeable.VoterRewardItem)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint16,t_bool)": {
+            "label": "mapping(uint16 => bool)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint16,t_struct(Pool)2460_storage)": {
+            "label": "mapping(uint16 => struct PublicAIClaimUpgradeable.Pool)",
+            "numberOfBytes": "32"
+          },
+          "t_struct(Pool)2460_storage": {
+            "label": "struct PublicAIClaimUpgradeable.Pool",
+            "members": [
+              {
+                "label": "total",
+                "type": "t_uint128",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "claimed",
+                "type": "t_uint128",
+                "offset": 16,
+                "slot": "0"
+              },
+              {
+                "label": "rewards",
+                "type": "t_mapping(t_address,t_struct(RewardItem)2436_storage)",
+                "offset": 0,
+                "slot": "1"
+              }
+            ],
+            "numberOfBytes": "64"
+          },
+          "t_struct(RewardItem)2436_storage": {
+            "label": "struct PublicAIClaimUpgradeable.RewardItem",
+            "members": [
+              {
+                "label": "user",
+                "type": "t_address",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "task",
+                "type": "t_uint16",
+                "offset": 20,
+                "slot": "0"
+              },
+              {
+                "label": "reward",
+                "type": "t_uint128",
+                "offset": 0,
+                "slot": "1"
+              },
+              {
+                "label": "times",
+                "type": "t_uint16",
+                "offset": 16,
+                "slot": "1"
+              }
+            ],
+            "numberOfBytes": "64"
+          },
+          "t_struct(VoterPool)2470_storage": {
+            "label": "struct PublicAIClaimUpgradeable.VoterPool",
+            "members": [
+              {
+                "label": "total",
+                "type": "t_uint128",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "claimed",
+                "type": "t_uint128",
+                "offset": 16,
+                "slot": "0"
+              },
+              {
+                "label": "rewards",
+                "type": "t_mapping(t_address,t_struct(VoterRewardItem)2450_storage)",
+                "offset": 0,
+                "slot": "1"
+              }
+            ],
+            "numberOfBytes": "64"
+          },
+          "t_struct(VoterRewardItem)2450_storage": {
+            "label": "struct PublicAIClaimUpgradeable.VoterRewardItem",
+            "members": [
+              {
+                "label": "user",
+                "type": "t_address",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "reward",
+                "type": "t_uint128",
+                "offset": 0,
+                "slot": "1"
+              },
+              {
+                "label": "timestamp",
+                "type": "t_uint32",
+                "offset": 16,
+                "slot": "1"
+              },
+              {
+                "label": "times",
+                "type": "t_uint16",
+                "offset": 20,
+                "slot": "1"
+              }
+            ],
+            "numberOfBytes": "64"
+          },
+          "t_uint128": {
+            "label": "uint128",
+            "numberOfBytes": "16"
+          },
+          "t_uint16": {
+            "label": "uint16",
+            "numberOfBytes": "2"
+          },
+          "t_uint32": {
+            "label": "uint32",
+            "numberOfBytes": "4"
+          }
+        },
+        "namespaces": {
+          "erc7201:openzeppelin.storage.ReentrancyGuard": [
+            {
+              "contract": "ReentrancyGuardUpgradeable",
+              "label": "_status",
+              "type": "t_uint256",
+              "src": "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol:43",
+              "offset": 0,
+              "slot": "0"
+            }
+          ],
+          "erc7201:openzeppelin.storage.Ownable": [
+            {
+              "contract": "OwnableUpgradeable",
+              "label": "_owner",
+              "type": "t_address",
+              "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:24",
+              "offset": 0,
+              "slot": "0"
+            }
+          ],
+          "erc7201:openzeppelin.storage.Initializable": [
+            {
+              "contract": "Initializable",
+              "label": "_initialized",
+              "type": "t_uint64",
+              "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:69",
+              "offset": 0,
+              "slot": "0"
+            },
+            {
+              "contract": "Initializable",
+              "label": "_initializing",
+              "type": "t_bool",
+              "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:73",
+              "offset": 8,
+              "slot": "0"
+            }
+          ]
+        }
+      }
+    },
+    "243719a21cfb7c7f2c0a538547006173b33fcbc6bb681aa5ccdd462c7dd74b0c": {
+      "address": "0x5415091cBADf30e145381eEa71F4bF69888f32cB",
+      "txHash": "0xda0afa5cbc1f14c546b41f0c9571004a4ed56444c023d4c93190b9a52a731e4e",
+      "layout": {
+        "solcVersion": "0.8.28",
+        "storage": [
+          {
+            "label": "signer",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_address",
+            "contract": "PublicAIClaimUpgradeable",
+            "src": "contracts/PublicAIClaimUpgradeable.sol:64"
+          },
+          {
+            "label": "totalClaimed",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_uint128",
+            "contract": "PublicAIClaimUpgradeable",
+            "src": "contracts/PublicAIClaimUpgradeable.sol:65"
+          },
+          {
+            "label": "totalClaimedPublic",
+            "offset": 16,
+            "slot": "1",
+            "type": "t_uint128",
+            "contract": "PublicAIClaimUpgradeable",
+            "src": "contracts/PublicAIClaimUpgradeable.sol:66"
+          },
+          {
+            "label": "usdtToken",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_contract(IERC20)1232",
+            "contract": "PublicAIClaimUpgradeable",
+            "src": "contracts/PublicAIClaimUpgradeable.sol:67"
+          },
+          {
+            "label": "publicToken",
+            "offset": 0,
+            "slot": "3",
+            "type": "t_contract(IERC20)1232",
+            "contract": "PublicAIClaimUpgradeable",
+            "src": "contracts/PublicAIClaimUpgradeable.sol:68"
+          },
+          {
+            "label": "pools",
+            "offset": 0,
+            "slot": "4",
+            "type": "t_mapping(t_uint16,t_struct(Pool)1690_storage)",
+            "contract": "PublicAIClaimUpgradeable",
+            "src": "contracts/PublicAIClaimUpgradeable.sol:71"
+          },
+          {
+            "label": "poolExists",
+            "offset": 0,
+            "slot": "5",
+            "type": "t_mapping(t_uint16,t_bool)",
+            "contract": "PublicAIClaimUpgradeable",
+            "src": "contracts/PublicAIClaimUpgradeable.sol:72"
+          },
+          {
+            "label": "voterPool",
+            "offset": 0,
+            "slot": "6",
+            "type": "t_struct(VoterPool)1700_storage",
+            "contract": "PublicAIClaimUpgradeable",
+            "src": "contracts/PublicAIClaimUpgradeable.sol:73"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_struct(InitializableStorage)73_storage": {
+            "label": "struct Initializable.InitializableStorage",
+            "members": [
+              {
+                "label": "_initialized",
+                "type": "t_uint64",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "_initializing",
+                "type": "t_bool",
+                "offset": 8,
+                "slot": "0"
+              }
+            ],
+            "numberOfBytes": "32"
+          },
+          "t_struct(OwnableStorage)13_storage": {
+            "label": "struct OwnableUpgradeable.OwnableStorage",
+            "members": [
+              {
+                "label": "_owner",
+                "type": "t_address",
+                "offset": 0,
+                "slot": "0"
+              }
+            ],
+            "numberOfBytes": "32"
+          },
+          "t_struct(ReentrancyGuardStorage)226_storage": {
+            "label": "struct ReentrancyGuardUpgradeable.ReentrancyGuardStorage",
+            "members": [
+              {
+                "label": "_status",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "0"
+              }
+            ],
+            "numberOfBytes": "32"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint64": {
+            "label": "uint64",
+            "numberOfBytes": "8"
+          },
+          "t_contract(IERC20)1232": {
+            "label": "contract IERC20",
+            "numberOfBytes": "20"
+          },
+          "t_mapping(t_address,t_struct(RewardItem)1666_storage)": {
+            "label": "mapping(address => struct PublicAIClaimUpgradeable.RewardItem)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_struct(VoterRewardItem)1680_storage)": {
+            "label": "mapping(address => struct PublicAIClaimUpgradeable.VoterRewardItem)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint16,t_bool)": {
+            "label": "mapping(uint16 => bool)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint16,t_struct(Pool)1690_storage)": {
+            "label": "mapping(uint16 => struct PublicAIClaimUpgradeable.Pool)",
+            "numberOfBytes": "32"
+          },
+          "t_struct(Pool)1690_storage": {
+            "label": "struct PublicAIClaimUpgradeable.Pool",
+            "members": [
+              {
+                "label": "total",
+                "type": "t_uint128",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "claimed",
+                "type": "t_uint128",
+                "offset": 16,
+                "slot": "0"
+              },
+              {
+                "label": "rewards",
+                "type": "t_mapping(t_address,t_struct(RewardItem)1666_storage)",
+                "offset": 0,
+                "slot": "1"
+              }
+            ],
+            "numberOfBytes": "64"
+          },
+          "t_struct(RewardItem)1666_storage": {
+            "label": "struct PublicAIClaimUpgradeable.RewardItem",
+            "members": [
+              {
+                "label": "user",
+                "type": "t_address",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "task",
+                "type": "t_uint16",
+                "offset": 20,
+                "slot": "0"
+              },
+              {
+                "label": "reward",
+                "type": "t_uint128",
+                "offset": 0,
+                "slot": "1"
+              },
+              {
+                "label": "times",
+                "type": "t_uint16",
+                "offset": 16,
+                "slot": "1"
+              }
+            ],
+            "numberOfBytes": "64"
+          },
+          "t_struct(VoterPool)1700_storage": {
+            "label": "struct PublicAIClaimUpgradeable.VoterPool",
+            "members": [
+              {
+                "label": "total",
+                "type": "t_uint128",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "claimed",
+                "type": "t_uint128",
+                "offset": 16,
+                "slot": "0"
+              },
+              {
+                "label": "rewards",
+                "type": "t_mapping(t_address,t_struct(VoterRewardItem)1680_storage)",
+                "offset": 0,
+                "slot": "1"
+              }
+            ],
+            "numberOfBytes": "64"
+          },
+          "t_struct(VoterRewardItem)1680_storage": {
+            "label": "struct PublicAIClaimUpgradeable.VoterRewardItem",
+            "members": [
+              {
+                "label": "user",
+                "type": "t_address",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "reward",
+                "type": "t_uint128",
+                "offset": 0,
+                "slot": "1"
+              },
+              {
+                "label": "timestamp",
+                "type": "t_uint32",
+                "offset": 16,
+                "slot": "1"
+              },
+              {
+                "label": "times",
+                "type": "t_uint16",
+                "offset": 20,
+                "slot": "1"
+              }
+            ],
+            "numberOfBytes": "64"
+          },
+          "t_uint128": {
+            "label": "uint128",
+            "numberOfBytes": "16"
+          },
+          "t_uint16": {
+            "label": "uint16",
+            "numberOfBytes": "2"
+          },
+          "t_uint32": {
+            "label": "uint32",
+            "numberOfBytes": "4"
+          }
+        },
+        "namespaces": {
+          "erc7201:openzeppelin.storage.ReentrancyGuard": [
+            {
+              "contract": "ReentrancyGuardUpgradeable",
+              "label": "_status",
+              "type": "t_uint256",
+              "src": "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol:43",
+              "offset": 0,
+              "slot": "0"
+            }
+          ],
+          "erc7201:openzeppelin.storage.Ownable": [
+            {
+              "contract": "OwnableUpgradeable",
+              "label": "_owner",
+              "type": "t_address",
+              "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:24",
+              "offset": 0,
+              "slot": "0"
+            }
+          ],
+          "erc7201:openzeppelin.storage.Initializable": [
+            {
+              "contract": "Initializable",
+              "label": "_initialized",
+              "type": "t_uint64",
+              "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:69",
+              "offset": 0,
+              "slot": "0"
+            },
+            {
+              "contract": "Initializable",
+              "label": "_initializing",
+              "type": "t_bool",
+              "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:73",
+              "offset": 8,
+              "slot": "0"
+            }
+          ]
+        }
+      }
+    }
+  }
+}

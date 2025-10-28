@@ -190,7 +190,7 @@ contract PublicAIClaimUpgradeable is
      * @return PoolInfo structure with total and claimed amounts
      */
     function getPool(uint16 task) external view returns (PoolInfo memory) {
-        require(poolExists[task], "Pool does not exist");
+//        require(poolExists[task], "Pool does not exist");
         Pool storage pool = pools[task];
         return PoolInfo({total: pool.total, claimed: pool.claimed});
     }
@@ -202,8 +202,17 @@ contract PublicAIClaimUpgradeable is
      * @return RewardItem structure
      */
     function getReward(uint16 task, address user) external view returns (RewardItem memory) {
-        require(poolExists[task], "Pool does not exist");
+//        require(poolExists[task], "Pool does not exist");
         return pools[task].rewards[user];
+    }
+
+    /**
+     * @dev Get voter reward information for a user
+     * @param user User address
+     * @return RewardItem structure
+     */
+    function getVoterReward(address user) external view returns (VoterRewardItem memory) {
+        return voterPool.rewards[user];
     }
 
     /**

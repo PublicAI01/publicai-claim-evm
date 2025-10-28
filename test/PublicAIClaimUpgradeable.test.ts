@@ -213,9 +213,9 @@ describe("PublicAIClaimUpgradeable", function () {
       expect(poolInfo.claimed).to.equal(0);
     });
 
-    it("Should revert when getting non-existent pool", async function () {
-      await expect(claim.getPool(999)).to.be.revertedWith("Pool does not exist");
-    });
+    // it("Should revert when getting non-existent pool", async function () {
+    //   await expect(claim.getPool(999)).to.be.revertedWith("Pool does not exist");
+    // });
   });
 
   describe("Claim Nonce", function () {

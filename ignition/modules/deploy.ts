@@ -1,4 +1,5 @@
 import { ethers, upgrades } from "hardhat";
+import {HDWalletProvider} from "hardhat/internal/core/providers/accounts";
 
 /**
  * Deploy Upgradeable PublicAIClaim Contract
@@ -38,6 +39,7 @@ async function main() {
     await usdtToken.waitForDeployment();
     usdtAddress = await usdtToken.getAddress();
     console.log("✅ USDT Token:", usdtAddress);
+    await  usdtToken.mint(deployer.address, ethers.parseUnits("1000000000", 6));
 
     const publicToken = await MockERC20.deploy("Mock PUBLIC", "PUBLIC", 18);
     await publicToken.waitForDeployment();
