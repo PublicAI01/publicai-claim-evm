@@ -230,6 +230,16 @@ contract PublicAIClaimUpgradeable is
     }
 
     /**
+     * @dev Get the current nonce for a voter
+     * @param user User address
+     * @return Current nonce value
+     */
+    function getVoterClaimNonce(address user) external view returns (uint16) {
+        VoterRewardItem storage rewardItem = voterPool.rewards[user];
+        return rewardItem.times;
+    }
+
+    /**
      * @dev Verify ECDSA (secp256k1) signature
      * @param messageHash The message hash that was signed
      * @param signature The signature bytes (65 bytes: r, s, v)
