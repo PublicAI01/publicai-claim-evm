@@ -240,7 +240,7 @@ contract PublicAIClaimUpgradeable is
         bytes32 messageHash,
         bytes memory signature,
         address signerAddress
-    ) public pure returns (bool) {
+    ) internal pure returns (bool) {
         require(signature.length == 65, "Invalid signature length");
 
         bytes32 r;
