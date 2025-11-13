@@ -24,6 +24,12 @@ contract PublicAIClaimUpgradeable is
         PUBLIC
     }
 
+    // Reward reason enum
+    enum ClaimReason {
+        Voter,
+        Referral
+    }
+
     // Reward item structure for tracking user rewards
     struct RewardItem {
         address user;
@@ -38,8 +44,8 @@ contract PublicAIClaimUpgradeable is
         uint128 claimed;
     }
 
-    // Voter reward item structure for tracking user rewards
-    struct VoterRewardItem {
+    // User reward item structure for tracking user rewards
+    struct UserRewardItem {
         address user;
         uint128 reward;
         uint32 timestamp;
@@ -53,11 +59,11 @@ contract PublicAIClaimUpgradeable is
         mapping(address => RewardItem) rewards;
     }
 
-    // Pool structure with voter reward mapping
-    struct VoterPool {
+    // Pool structure with user reward mapping
+    struct UserPool {
         uint128 total;
         uint128 claimed;
-        mapping(address => VoterRewardItem) rewards;
+        mapping(address => UserRewardItem) rewards;
     }
 
     // State variables
@@ -70,7 +76,7 @@ contract PublicAIClaimUpgradeable is
     // Mapping from task ID to Pool
     mapping(uint16 => Pool) public pools;
     mapping(uint16 => bool) public poolExists;
-    VoterPool public voterPool;
+    UserPool public userPool;
 
     // Events
     event PoolRegistered(uint16 indexed task, uint128 reward);
@@ -84,11 +90,12 @@ contract PublicAIClaimUpgradeable is
     event SignerUpdated(address newSigner);
     event TokenUpdated(address token, RewardType tokenType);
     event Withdrawn(address indexed receiver, uint128 amount, RewardType tokenType);
-    event VoterRewardClaimed(
+    event UserRewardClaimed(
         address indexed user,
         uint128 reward,
         uint32 timestamp,
         uint16 nonce,
+        ClaimReason reason,
         RewardType rewardType
     );
 
@@ -207,12 +214,12 @@ contract PublicAIClaimUpgradeable is
     }
 
     /**
-     * @dev Get voter reward information for a user
+     * @dev Get user reward information for a user
      * @param user User address
-     * @return RewardItem structure
+     * @return UserRewardItem structure
      */
-    function getVoterReward(address user) external view returns (VoterRewardItem memory) {
-        return voterPool.rewards[user];
+    function getUserReward(address user) external view returns (UserRewardItem memory) {
+        return userPool.rewards[user];
     }
 
     /**
@@ -230,12 +237,12 @@ contract PublicAIClaimUpgradeable is
     }
 
     /**
-     * @dev Get the current nonce for a voter
+     * @dev Get the current nonce for a user reward
      * @param user User address
      * @return Current nonce value
      */
-    function getVoterClaimNonce(address user) external view returns (uint16) {
-        VoterRewardItem storage rewardItem = voterPool.rewards[user];
+    function getUserClaimNonce(address user) external view returns (uint16) {
+        UserRewardItem storage rewardItem = userPool.rewards[user];
         return rewardItem.times;
     }
 
@@ -451,32 +458,34 @@ contract PublicAIClaimUpgradeable is
     }
 
     /**
-     * @dev Claim USDT rewards for voter with signature verification
+     * @dev Claim USDT rewards for user with signature verification
      * @param nonce Nonce for replay protection
      * @param timestamp Timestamp when the claim was created
      * @param reward Reward amount
      * @param receiver Receiver address
+     * @param reason Claim Reason
      * @param signature Ed25519 signature
      */
-    function voter_claim(
+    function user_claim(
         uint16 nonce,
         uint32 timestamp,
         uint128 reward,
         address receiver,
+        ClaimReason reason,
         bytes memory signature
     ) external nonReentrant {
         if (msg.sender != receiver) revert UnauthorizedAccount();
 
         // Create message hash
         bytes32 messageHash = keccak256(
-            abi.encodePacked(nonce, timestamp, reward, receiver)
+            abi.encodePacked(nonce, timestamp, reward, receiver, uint8(reason))
         );
 
         // Verify signature
         if (!verifySignature(messageHash, signature, signer)) revert InvalidSignature();
 
         // Initialize the reward item if it doesn't already exist
-        VoterRewardItem storage rewardItem = voterPool.rewards[receiver];
+        UserRewardItem storage rewardItem = userPool.rewards[receiver];
         if (rewardItem.user != address(0)) {
             // Check nonce for replay protection
             if (rewardItem.times != nonce) revert InvalidNonce();
@@ -500,45 +509,48 @@ contract PublicAIClaimUpgradeable is
         }
 
         // Update total claimed
-        uint128 newTotalClaimed = voterPool.claimed + reward;
-        if (newTotalClaimed < voterPool.claimed) revert OverflowError();
+        uint128 newTotalClaimed = userPool.claimed + reward;
+        if (newTotalClaimed < userPool.claimed) revert OverflowError();
 
-        voterPool.claimed = newTotalClaimed;
+        userPool.claimed = newTotalClaimed;
 
         // Transfer tokens
         bool success = usdtToken.transfer(receiver, uint256(reward));
         if (!success) revert ClaimInfoError();
 
-        emit VoterRewardClaimed(
+        emit UserRewardClaimed(
             receiver,
             reward,
             timestamp,
             nonce,
+        reason,
             RewardType.USDT
         );
     }
 
 
     /**
-     * @dev Claim PUBLIC token rewards for voter with signature verification
+     * @dev Claim PUBLIC token rewards for user with signature verification
      * @param nonce Nonce for replay protection
      * @param timestamp Timestamp when the claim was created
      * @param reward Reward amount
      * @param receiver Receiver address
+     * @param reason Claim Reason
      * @param signature Ed25519 signature
      */
-    function voter_claim_public(
+    function user_claim_public(
         uint16 nonce,
         uint32 timestamp,
         uint128 reward,
         address receiver,
+        ClaimReason reason,
         bytes memory signature
     ) external nonReentrant {
         if (msg.sender != receiver) revert UnauthorizedAccount();
 
         // Create message hash
         bytes32 messageHash = keccak256(
-            abi.encodePacked(nonce, timestamp, reward, receiver)
+            abi.encodePacked(nonce, timestamp, reward, receiver, uint8(reason), uint8(RewardType.PUBLIC))
         );
 
         // Verify signature
@@ -546,7 +558,7 @@ contract PublicAIClaimUpgradeable is
 
 
         // Initialize the reward item if it doesn't already exist
-        VoterRewardItem storage rewardItem = voterPool.rewards[receiver];
+        UserRewardItem storage rewardItem = userPool.rewards[receiver];
         if (rewardItem.user != address(0)) {
             // Check nonce for replay protection
             if (rewardItem.times != nonce) revert InvalidNonce();
@@ -579,11 +591,12 @@ contract PublicAIClaimUpgradeable is
         bool success = publicToken.transfer(receiver, uint256(reward));
         if (!success) revert ClaimInfoError();
 
-        emit VoterRewardClaimed(
+        emit UserRewardClaimed(
             receiver,
             reward,
             timestamp,
             nonce,
+        reason,
             RewardType.PUBLIC
         );
     }

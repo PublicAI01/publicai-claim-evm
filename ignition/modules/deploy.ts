@@ -35,11 +35,11 @@ async function main() {
     console.log("Deploying test ERC20 tokens...");
     const MockERC20 = await ethers.getContractFactory("MockERC20");
 
-    const usdtToken = await MockERC20.deploy("Mock USDT", "USDT", 6);
+    const usdtToken = await MockERC20.deploy("Mock USDT", "USDT", 18);
     await usdtToken.waitForDeployment();
     usdtAddress = await usdtToken.getAddress();
     console.log("✅ USDT Token:", usdtAddress);
-    await  usdtToken.mint(deployer.address, ethers.parseUnits("1000000000", 6));
+    await  usdtToken.mint(deployer.address, ethers.parseUnits("1000000000", 18));
 
     const publicToken = await MockERC20.deploy("Mock PUBLIC", "PUBLIC", 18);
     await publicToken.waitForDeployment();

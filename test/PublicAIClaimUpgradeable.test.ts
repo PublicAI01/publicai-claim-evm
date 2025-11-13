@@ -510,13 +510,24 @@ describe("PublicAIClaimUpgradeable", function () {
       nonce: number,
       timestamp: number,
       reward: bigint,
-      receiver: string
+      receiver: string,
+      reason: number,
+      rewardType?: number
   ): Promise<string> {
-    const messageHash = ethers.solidityPackedKeccak256(
-        ["uint16", "uint32", "uint128", "address"],
-        [nonce, timestamp, reward, receiver]
-    );
-
+    let messageHash: string;
+    if (rewardType !== undefined) {
+      // For PUBLIC token claims
+      messageHash = ethers.solidityPackedKeccak256(
+          ["uint16", "uint32", "uint128", "address", "uint8", "uint8"],
+          [nonce, timestamp, reward, receiver, reason, rewardType]
+      );
+    } else {
+      // For USDT claims
+      messageHash = ethers.solidityPackedKeccak256(
+          ["uint16", "uint32", "uint128", "address", "uint8"],
+          [nonce, timestamp, reward, receiver, reason]
+      );
+    }
     // Sign the message hash
     const messageHashBytes = ethers.getBytes(messageHash);
     const signature = await signer.signMessage(messageHashBytes);
@@ -535,17 +546,17 @@ describe("PublicAIClaimUpgradeable", function () {
         const initialUserBalance = await usdtToken.balanceOf(user1.address);
 
         // Sign the message
-        const signature = await signVoterMessage(nonce, timestamp, reward, user1.address);
+        const signature = await signVoterMessage(nonce, timestamp, reward, user1.address, 0);
 
         // Claim the reward
-        await claim.connect(user1).voter_claim(nonce, timestamp, reward, user1.address, signature);
+        await claim.connect(user1).user_claim(nonce, timestamp, reward, user1.address, 0, signature);
 
         // Check user's balance has increased
         const newUserBalance = await usdtToken.balanceOf(user1.address);
         expect(newUserBalance - initialUserBalance).to.equal(reward);
 
         // Check that the event was emitted
-        const filter = claim.filters.VoterRewardClaimed(user1.address);
+        const filter = claim.filters.UserRewardClaimed(user1.address);
         const events = await claim.queryFilter(filter);
         expect(events.length).to.be.greaterThan(0);
 
@@ -563,16 +574,16 @@ describe("PublicAIClaimUpgradeable", function () {
         const timestamp1 = Math.floor(Date.now() / 1000);
         const nonce1 = 0;
 
-        const signature1 = await signVoterMessage(nonce1, timestamp1, reward1, user1.address);
-        await claim.connect(user1).voter_claim(nonce1, timestamp1, reward1, user1.address, signature1);
+        const signature1 = await signVoterMessage(nonce1, timestamp1, reward1, user1.address, 0);
+        await claim.connect(user1).user_claim(nonce1, timestamp1, reward1, user1.address, 0, signature1);
 
         // Second claim (incremental)
         const reward2 = ethers.parseUnits("75", 6);
         const timestamp2 = Math.floor(Date.now() / 1000) + 100; // 100 seconds later
         const nonce2 = 1; // Must increment nonce
 
-        const signature2 = await signVoterMessage(nonce2, timestamp2, reward2, user1.address);
-        await claim.connect(user1).voter_claim(nonce2, timestamp2, reward2, user1.address, signature2);
+        const signature2 = await signVoterMessage(nonce2, timestamp2, reward2, user1.address, 0);
+        await claim.connect(user1).user_claim(nonce2, timestamp2, reward2, user1.address, 0, signature2);
 
         // Check total received
         const totalExpected = reward1 + reward2;
@@ -586,11 +597,11 @@ describe("PublicAIClaimUpgradeable", function () {
         const nonce = 0;
 
         // Create signature for user1 but try to use it for user2
-        const signature = await signVoterMessage(nonce, timestamp, reward, user1.address);
+        const signature = await signVoterMessage(nonce, timestamp, reward, user1.address, 0);
 
         // Should fail when user2 tries to claim with user1's signature
         await expect(
-            claim.connect(user2).voter_claim(nonce, timestamp, reward, user2.address, signature)
+            claim.connect(user2).user_claim(nonce, timestamp, reward, user2.address, 0, signature)
         ).to.be.revertedWithCustomError(claim, "InvalidSignature");
       });
 
@@ -599,17 +610,17 @@ describe("PublicAIClaimUpgradeable", function () {
         const expiredTimestamp = Math.floor(Date.now() / 1000);
         const nonce = 0;
 
-        const signature = await signVoterMessage(nonce, expiredTimestamp, reward, user1.address);
+        const signature = await signVoterMessage(nonce, expiredTimestamp, reward, user1.address, 0);
 
         // Should fail due to expired timestamp
-        await claim.connect(user1).voter_claim(nonce, expiredTimestamp, reward, user1.address, signature);
+        await claim.connect(user1).user_claim(nonce, expiredTimestamp, reward, user1.address, 0, signature);
         const reward2 = ethers.parseUnits("75", 6);
         const timestamp2 = Math.floor(Date.now() / 1000)-1000;
         const nonce2 = 1; // Must increment nonce
 
-        const signature2 = await signVoterMessage(nonce2, timestamp2, reward2, user1.address);
+        const signature2 = await signVoterMessage(nonce2, timestamp2, reward2, user1.address, 0);
         await expect(
-            claim.connect(user1).voter_claim(nonce2, timestamp2, reward2, user1.address, signature2)
+            claim.connect(user1).user_claim(nonce2, timestamp2, reward2, user1.address, 0, signature2)
         ).to.be.revertedWithCustomError(claim, "TimestampError");
       });
 
@@ -619,19 +630,19 @@ describe("PublicAIClaimUpgradeable", function () {
         const timestamp1 = Math.floor(Date.now() / 1000);
         const nonce1 = 0;
 
-        const signature1 = await signVoterMessage(nonce1, timestamp1, reward1, user1.address);
-        await claim.connect(user1).voter_claim(nonce1, timestamp1, reward1, user1.address, signature1);
+        const signature1 = await signVoterMessage(nonce1, timestamp1, reward1, user1.address, 0);
+        await claim.connect(user1).user_claim(nonce1, timestamp1, reward1, user1.address, 0, signature1);
 
         // Try to claim with wrong nonce (should be 1, not 2)
         const reward2 = ethers.parseUnits("75", 6);
         const timestamp2 = Math.floor(Date.now() / 1000) + 100;
         const wrongNonce = 2;
 
-        const signature2 = await signVoterMessage(wrongNonce, timestamp2, reward2, user1.address);
+        const signature2 = await signVoterMessage(wrongNonce, timestamp2, reward2, user1.address, 0);
 
         // Should fail due to invalid nonce
         await expect(
-            claim.connect(user1).voter_claim(wrongNonce, timestamp2, reward2, user1.address, signature2)
+            claim.connect(user1).user_claim(wrongNonce, timestamp2, reward2, user1.address, 0, signature2)
         ).to.be.revertedWithCustomError(claim, "InvalidNonce");
       });
     });
@@ -646,17 +657,17 @@ describe("PublicAIClaimUpgradeable", function () {
         const initialUserBalance = await publicToken.balanceOf(user1.address);
 
         // Sign the message
-        const signature = await signVoterMessage(nonce, timestamp, reward, user1.address);
+        const signature = await signVoterMessage(nonce, timestamp, reward, user1.address, 0, 1);
 
         // Claim the reward
-        await claim.connect(user1).voter_claim_public(nonce, timestamp, reward, user1.address, signature);
+        await claim.connect(user1).user_claim_public(nonce, timestamp, reward, user1.address, 0, signature);
 
         // Check user's balance has increased
         const newUserBalance = await publicToken.balanceOf(user1.address);
         expect(newUserBalance - initialUserBalance).to.equal(reward);
 
         // Check that the event was emitted
-        const filter = claim.filters.VoterRewardClaimed(user1.address);
+        const filter = claim.filters.UserRewardClaimed(user1.address);
         const events = await claim.queryFilter(filter);
         expect(events.length).to.be.greaterThan(0);
 
@@ -665,7 +676,8 @@ describe("PublicAIClaimUpgradeable", function () {
         expect(event.args[1]).to.equal(reward); // reward
         expect(event.args[2]).to.equal(timestamp); // timestamp
         expect(event.args[3]).to.equal(nonce); // nonce
-        expect(event.args[4]).to.equal(1); // RewardType.PUBLIC
+        expect(event.args[4]).to.equal(0); // ClaimReason.Voter
+        expect(event.args[5]).to.equal(1); // RewardType.PUBLIC
       });
 
       it("Should allow incremental PUBLIC token rewards", async function () {
@@ -674,16 +686,16 @@ describe("PublicAIClaimUpgradeable", function () {
         const timestamp1 = Math.floor(Date.now() / 1000);
         const nonce1 = 0;
 
-        const signature1 = await signVoterMessage(nonce1, timestamp1, reward1, user1.address);
-        await claim.connect(user1).voter_claim_public(nonce1, timestamp1, reward1, user1.address, signature1);
+        const signature1 = await signVoterMessage(nonce1, timestamp1, reward1, user1.address, 0, 1);
+        await claim.connect(user1).user_claim_public(nonce1, timestamp1, reward1, user1.address, 0, signature1);
 
         // Second claim (incremental)
         const reward2 = ethers.parseUnits("75", 18);
         const timestamp2 = Math.floor(Date.now() / 1000) + 100; // 100 seconds later
         const nonce2 = 1; // Must increment nonce
 
-        const signature2 = await signVoterMessage(nonce2, timestamp2, reward2, user1.address);
-        await claim.connect(user1).voter_claim_public(nonce2, timestamp2, reward2, user1.address, signature2);
+        const signature2 = await signVoterMessage(nonce2, timestamp2, reward2, user1.address, 0, 1);
+        await claim.connect(user1).user_claim_public(nonce2, timestamp2, reward2, user1.address, 0, signature2);
 
         // Check total received
         const totalExpected = reward1 + reward2;
@@ -697,11 +709,11 @@ describe("PublicAIClaimUpgradeable", function () {
         const nonce = 0;
 
         // Sign for user1
-        const signature = await signVoterMessage(nonce, timestamp, reward, user1.address);
+        const signature = await signVoterMessage(nonce, timestamp, reward, user1.address, 0, 1);
 
         // User2 tries to claim as user1
         await expect(
-            claim.connect(user2).voter_claim_public(nonce, timestamp, reward, user1.address, signature)
+            claim.connect(user2).user_claim_public(nonce, timestamp, reward, user1.address, 0, signature)
         ).to.be.revertedWithCustomError(claim, "UnauthorizedAccount");
       });
 
@@ -714,8 +726,8 @@ describe("PublicAIClaimUpgradeable", function () {
         const initialTotalClaimed = await claim.totalClaimedPublic();
 
         // Sign and claim
-        const signature = await signVoterMessage(nonce, timestamp, reward, user1.address);
-        await claim.connect(user1).voter_claim_public(nonce, timestamp, reward, user1.address, signature);
+        const signature = await signVoterMessage(nonce, timestamp, reward, user1.address, 0, 1);
+        await claim.connect(user1).user_claim_public(nonce, timestamp, reward, user1.address, 0, signature);
 
         // Check total claimed has increased
         const newTotalClaimed = await claim.totalClaimedPublic();
