@@ -27,7 +27,8 @@ contract PublicAIClaimUpgradeable is
     // Reward reason enum
     enum ClaimReason {
         Voter,
-        Referral
+        Referral,
+        Contest
     }
 
     // Reward item structure for tracking user rewards
